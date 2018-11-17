@@ -7,7 +7,7 @@ data Token =
   | Eq | PlusEq | MinusEq | TimesEq | DivideEq
   | Gt | Lt | GtE | LtE
   | LBrace | RBrace | LParen | RParen
-  | Num Int
+  | Num Int | Str String | Bln Bool
   deriving (Show)
 
 data Keyword = If | Run | Else | While | Ret
