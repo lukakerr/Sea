@@ -15,10 +15,12 @@ lexer ('+':'=':cs) = PlusEq : lexer cs
 lexer ('-':'=':cs) = MinusEq : lexer cs
 lexer ('*':'=':cs) = TimesEq : lexer cs
 lexer ('/':'=':cs) = DivideEq : lexer cs
+lexer ('%':'=':cs) = ModulusEq : lexer cs
 lexer ('+':cs) = Plus : lexer cs
 lexer ('-':cs) = Minus : lexer cs
 lexer ('*':cs) = Times : lexer cs
 lexer ('/':cs) = Divide : lexer cs
+lexer ('%':cs) = Modulus : lexer cs
 
 -- arithmetic comparisons
 lexer ('>':'=':cs) = GtE : lexer cs

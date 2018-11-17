@@ -8,29 +8,37 @@ NC='\033[0m'
 
 mkdir temp
 
-for t in ./tests/*.sea;
-do
-  out=`stack exec sea -- $t`
+function run() {
+  dir="$1"
 
-  filename=$(basename -- "$t")
-  extension="${filename##*.}"
-  filename="${filename%.*}"
+  mkdir "temp/$dir"
 
-  echo "$out" > "temp/$filename.tmp"
+  for t in "./tests/$dir/"*.sea;
+  do
+    out=`stack exec sea -- $t`
 
-  diff=`diff ./temp/$filename.tmp ./tests/$filename.out`
+    filename=$(basename -- "$t")
+    extension="${filename##*.}"
+    filename="${filename%.*}"
 
-  if [[ $diff ]]
-  then
-    echo "${RED}$filename.sea failed${NC}"
-    echo "${CYAN}output:${NC}"
-    echo "$out"
-    echo ""
-    echo "${CYAN}diff:${NC}"
-    echo "$diff"
-  else
-    echo "${GREEN}$filename.sea passed${NC}"
-  fi
-done
+    echo "$out" > "temp/$dir/$filename.tmp"
+
+    diff=`diff ./temp/$dir/$filename.tmp ./tests/$dir/$filename.out`
+
+    if [[ $diff ]]
+    then
+      echo "${RED}$filename.sea failed${NC}"
+      echo "${CYAN}output:${NC}"
+      echo "$out"
+      echo ""
+      echo "${CYAN}diff:${NC}"
+      echo "$diff"
+    else
+      echo "${GREEN}$filename.sea passed${NC}"
+    fi
+  done
+}
+
+run "lexer"
 
 rm -r ./temp

@@ -1,0 +1,13 @@
+num n1 = 5
+num n2 = 3
+num n3 = 5 % 3
+num n4 = n3 + n1
+num n5 = n2 - 1
+num n6 = n2 * 1
+num n7 = 3 / 3
+num n8 = 10 % %
+n1 += 1
+n2 -= 2
+n3 *= 3
+n4 /= 4
+n5 %= 5

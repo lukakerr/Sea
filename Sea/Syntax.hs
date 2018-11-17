@@ -3,8 +3,8 @@ module Sea.Syntax where
 data Token =
   Kwd Keyword
   | Identifier String
-  | Plus | Minus | Times | Divide
-  | Eq | PlusEq | MinusEq | TimesEq | DivideEq
+  | Plus | Minus | Times | Divide | Modulus
+  | Eq | PlusEq | MinusEq | TimesEq | DivideEq | ModulusEq
   | Gt | Lt | GtE | LtE
   | LBrace | RBrace | LParen | RParen
   | Num Int | Str String | Bln Bool
