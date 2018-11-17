@@ -1,0 +1,15 @@
+;; Factorial function
+num factorial {num n} (
+  if {n < 0} run (
+    ret -1
+  ) else (
+    num r = 1
+
+    while {n > 0} (
+      r *= n
+      n -= 1
+    )
+
+    ret r
+  )
+)

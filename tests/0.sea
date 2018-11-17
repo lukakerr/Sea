@@ -1,0 +1,4 @@
+bln var = true
+num x = 5
+str string = 'Hello'
+str stringTwo = "Hello again"

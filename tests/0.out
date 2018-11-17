@@ -1,0 +1,1 @@
+[Identifier "bln",Identifier "var",Eq,Bln True,Identifier "num",Identifier "x",Eq,Num 5,Identifier "str",Identifier "string",Eq,Str "Hello",Identifier "str",Identifier "stringTwo",Eq,Str "Hello again"]
