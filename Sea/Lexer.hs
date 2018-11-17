@@ -2,7 +2,6 @@ module Sea.Lexer (lexer) where
 
 import Sea.Syntax
 import Data.Char(isSpace, isDigit, isAlpha)
-import Data.List(partition)
 
 lexer :: String -> [Token]
 lexer [] = []

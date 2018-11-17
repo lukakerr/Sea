@@ -1,4 +1,4 @@
-# sea
+# Sea
 
 A simple evaluator for a C like language, currently a work in progress.
 Built to learn Haskell and the process of writing an evaluator.
@@ -26,4 +26,10 @@ num factorial {num n} (
 ```bash
 $ stack build
 $ stack run sea tests/1.sea
+```
+
+### Testing
+
+```bash
+$ ./test.sh
 ```
