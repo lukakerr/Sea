@@ -27,14 +27,14 @@ function run() {
 
     if [[ $diff ]]
     then
-      echo "${RED}$filename.sea failed${NC}"
+      echo "${RED}$dir/$filename.sea failed${NC}"
       echo "${CYAN}output:${NC}"
       echo "$out"
       echo ""
       echo "${CYAN}diff:${NC}"
       echo "$diff"
     else
-      echo "${GREEN}$filename.sea passed${NC}"
+      echo "${GREEN}$dir/$filename.sea passed${NC}"
     fi
   done
 }
