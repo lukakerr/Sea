@@ -11,23 +11,23 @@ lexer (' ':cs) = lexer cs
 lexer (c:cs) | isSpace c = lexer cs
 
 -- arithmetic operations
-lexer ('+':'=':cs) = PlusEq : lexer cs
-lexer ('-':'=':cs) = MinusEq : lexer cs
-lexer ('*':'=':cs) = TimesEq : lexer cs
-lexer ('/':'=':cs) = DivideEq : lexer cs
-lexer ('%':'=':cs) = ModulusEq : lexer cs
-lexer ('+':cs) = Plus : lexer cs
-lexer ('-':cs) = Minus : lexer cs
-lexer ('*':cs) = Times : lexer cs
-lexer ('/':cs) = Divide : lexer cs
-lexer ('%':cs) = Modulus : lexer cs
+lexer ('+':'=':cs) = Operator PlusEq : lexer cs
+lexer ('-':'=':cs) = Operator MinusEq : lexer cs
+lexer ('*':'=':cs) = Operator TimesEq : lexer cs
+lexer ('/':'=':cs) = Operator DivideEq : lexer cs
+lexer ('%':'=':cs) = Operator ModulusEq : lexer cs
+lexer ('+':cs) = Operator Plus : lexer cs
+lexer ('-':cs) = Operator Minus : lexer cs
+lexer ('*':cs) = Operator Times : lexer cs
+lexer ('/':cs) = Operator Divide : lexer cs
+lexer ('%':cs) = Operator Modulus : lexer cs
 
 -- arithmetic comparisons
-lexer ('>':'=':cs) = GtE : lexer cs
-lexer ('<':'=':cs) = LtE : lexer cs
-lexer ('=':cs) = Eq : lexer cs
-lexer ('>':cs) = Gt : lexer cs
-lexer ('<':cs) = Lt : lexer cs
+lexer ('>':'=':cs) = Operator GtE : lexer cs
+lexer ('<':'=':cs) = Operator LtE : lexer cs
+lexer ('=':cs) = Operator Eq : lexer cs
+lexer ('>':cs) = Operator Gt : lexer cs
+lexer ('<':cs) = Operator Lt : lexer cs
 
 -- braces, parentheses
 lexer ('(':cs) = LParen : lexer cs

@@ -1,1 +1,1 @@
-[Identifier "bln",Identifier "var",Eq,Bln True,Identifier "num",Identifier "x",Eq,Num 5,Identifier "str",Identifier "string",Eq,Str "Hello",Identifier "str",Identifier "stringTwo",Eq,Str "Hello again"]
+[Identifier "bln",Identifier "var",Operator Eq,Bln True,Identifier "num",Identifier "x",Operator Eq,Num 5,Identifier "str",Identifier "string",Operator Eq,Str "Hello",Identifier "str",Identifier "stringTwo",Operator Eq,Str "Hello again"]

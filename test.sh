@@ -10,12 +10,13 @@ mkdir temp
 
 function run() {
   dir="$1"
+  flag="$2"
 
   mkdir "temp/$dir"
 
   for t in "./tests/$dir/"*.sea;
   do
-    out=`stack exec sea -- $t`
+    out=`stack exec sea -- $t $flag`
 
     filename=$(basename -- "$t")
     extension="${filename##*.}"
@@ -39,6 +40,8 @@ function run() {
   done
 }
 
-run "lexer"
+run "lexer" "--lexer"
+run "parser" "--parser"
+run "evaluator"
 
 rm -r ./temp
