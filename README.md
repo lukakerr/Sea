@@ -29,9 +29,9 @@ Or you can run the interactive REPL:
 ```bash
 $ stack run sea repl
 
-# Sea >> 1 + 2
+# Sea> 1 + 2
 # 3
-# Sea >> :q
+# Sea> :q
 ```
 
 ### Testing

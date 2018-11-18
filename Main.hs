@@ -25,7 +25,7 @@ main = do
 
 repl :: IO ()
 repl = do
-  putStr "Sea >> "
+  putStr "Sea> "
   hFlush stdout
   line <- getLine
   if line == ":q" then exitSuccess else do
