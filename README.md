@@ -52,7 +52,7 @@ str string = 'Hello'
 str stringTwo = "Hello again"
 
 ;; functions
-num factorial {num n} (
+fn factorial {num n} -> num (
   if {n < 0} run (
     ret -1
   ) else (

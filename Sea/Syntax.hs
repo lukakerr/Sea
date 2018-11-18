@@ -4,20 +4,26 @@ type Id = String
 
 -- tokens the lexer can produce
 data Token =
-  Kwd Keyword
+  Arrow
   | Operator Op
+  | Kwd Keyword
+  | DataType Type
   | Identifier Id
-  | LBrace | RBrace | LParen | RParen
   | Num Int | Str String | Bln Bool
+  | LBrace | RBrace | LParen | RParen
   deriving (Show)
 
-data Keyword = If | Run | Else | While | Ret
+data Keyword = If | Run | Else | While | Ret | Fn
+  deriving (Show)
+
+-- data types
+data Type = N | S | B
   deriving (Show)
 
 data Op =
-  Plus | Minus | Times | Divide | Modulus
+  Gt | Lt | GtE | LtE
+  | Plus | Minus | Times | Divide | Modulus
   | Eq | PlusEq | MinusEq | TimesEq | DivideEq | ModulusEq
-  | Gt | Lt | GtE | LtE
   deriving (Show)
 
 -- expressions the parser can produce

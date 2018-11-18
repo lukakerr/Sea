@@ -2,9 +2,10 @@ import Sea.Lexer
 import Sea.Parser
 import Sea.Syntax
 import Sea.Evaluator
-import System.Environment
+
 import System.IO
 import System.Exit
+import System.Environment
 
 main :: IO ()
 main = do
@@ -23,20 +24,25 @@ main = do
         _ -> evaluatr contents
     _ -> error "Currently only accepts a single file"
 
+-- run an interactive repl
 repl :: IO ()
 repl = do
   putStr "Sea> "
   hFlush stdout
   line <- getLine
-  if line == ":q" then exitSuccess else do
-    evaluatr line
-    repl
+  case line of
+    ":q" -> exitSuccess
+    _ -> evaluatr line
+  repl
 
+-- run the lexer
 lexr :: String -> IO ()
 lexr = print . lexer
 
+-- run the parser
 parsr :: String -> IO ()
 parsr = print . parser . lexer
 
+-- run the evaluator
 evaluatr :: String -> IO ()
-evaluatr = putStrLn . id showValue . evaluator . parser . lexer
+evaluatr = putStrLn . showValue . evaluator . parser . lexer

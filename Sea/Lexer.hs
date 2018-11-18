@@ -10,6 +10,9 @@ lexer [] = []
 lexer (' ':cs) = lexer cs
 lexer (c:cs) | isSpace c = lexer cs
 
+-- arrow
+lexer ('-' : '>' : cs) = Arrow : lexer cs
+
 -- arithmetic operations
 lexer ('+':'=':cs) = Operator PlusEq : lexer cs
 lexer ('-':'=':cs) = Operator MinusEq : lexer cs
@@ -56,7 +59,7 @@ lexer ('"':cs) = let
 
 -- words
 lexer (c:cs) | isAlpha c = let
-  (word, rest) = span isAlpha (c:cs)
+  (word, rest) = span isWord (c : cs)
     in captureKwd word : lexer rest
 
 -- remove comments
@@ -72,9 +75,17 @@ captureStr string quote = let
     in (Str str, withoutTrailing)
 
 captureKwd :: String -> Token
-captureKwd "if" = Kwd If
-captureKwd "run" = Kwd Run
-captureKwd "else" = Kwd Else
-captureKwd "while" = Kwd While
-captureKwd "ret" = Kwd Ret
-captureKwd w = Identifier w
+captureKwd kwd = case kwd of
+  "if" -> Kwd If
+  "run" -> Kwd Run
+  "else" -> Kwd Else
+  "while" -> Kwd While
+  "ret" -> Kwd Ret
+  "fn" -> Kwd Fn
+  "num" -> DataType N
+  "bln" -> DataType B
+  "str" -> DataType S
+  w -> Identifier w
+
+isWord :: Char -> Bool
+isWord w = isAlpha w || isDigit w
