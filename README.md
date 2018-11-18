@@ -1,13 +1,21 @@
 # Sea
 
 A simple evaluator for a C like language, currently a work in progress.
-Built to learn Haskell and the process of writing an evaluator.
+Built to learn Haskell and the process of writing a lexer, parser and evaluator.
 
 ### Running
 
 ```bash
 $ stack build
-$ stack run sea tests/1.sea
+
+# Run the evaluator
+$ stack run sea tests/evaluator/2.sea
+
+# Run the lexer
+$ stack run sea tests/evaluator/2.sea --lexer
+
+# Run the parser
+$ stack run sea tests/evaluator/2.sea --parser
 ```
 
 ### Testing
