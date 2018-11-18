@@ -5,9 +5,15 @@ Built to learn Haskell and the process of writing a lexer, parser and evaluator.
 
 ### Running
 
+First build `sea`
+
 ```bash
 $ stack build
+```
 
+You can write a `.sea` program and evaluate, lex or parse it:
+
+```bash
 # Run the evaluator
 $ stack run sea tests/evaluator/2.sea
 
@@ -16,6 +22,16 @@ $ stack run sea tests/evaluator/2.sea --lexer
 
 # Run the parser
 $ stack run sea tests/evaluator/2.sea --parser
+```
+
+Or you can run the interactive REPL:
+
+```bash
+$ stack run sea repl
+
+# Sea >> 1 + 2
+# 3
+# Sea >> :q
 ```
 
 ### Testing
