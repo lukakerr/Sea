@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Simple test script to diff .sea file with .out file
 # Run: ./test.sh
 
