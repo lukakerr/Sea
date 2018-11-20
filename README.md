@@ -1,7 +1,10 @@
 # Sea
 
 A simple evaluator for a C like language, currently a work in progress.
+
 Built to learn Haskell and the process of writing a lexer, parser and evaluator.
+
+A recursive descent parser is used for parsing.
 
 Currently in the very early stages of development.
 
