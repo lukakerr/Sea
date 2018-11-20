@@ -1,1 +1,1 @@
-App (App (Prim Plus) (Const (Number 1))) (App (App (Prim Plus) (Const (Number 3))) (Const (Number 5)))
+Main (Return (App (App (Prim Plus) (Const (Number 1))) (App (App (Prim Plus) (Const (Number 3))) (Const (Number 5)))))

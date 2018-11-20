@@ -3,6 +3,8 @@
 A simple evaluator for a C like language, currently a work in progress.
 Built to learn Haskell and the process of writing a lexer, parser and evaluator.
 
+Currently in the very early stages of development.
+
 ### Running
 
 First build `sea`
@@ -29,8 +31,10 @@ Or you can run the interactive REPL:
 ```bash
 $ stack run sea repl
 
-# Sea> 1 + 2
+# Sea> print 1 + 2
 # 3
+# Sea> num n = 5 ret n
+# 5
 # Sea> :q
 ```
 
@@ -42,28 +46,13 @@ $ ./test.sh
 
 ### Examples
 
-Below are some example `.sea` programs to demonstrate the syntax.
+Below is an example `.sea` program to demonstrate the syntax.
+This will be updated as the parser and evaluator progress.
 
 ```assembly
-;; types
-bln var = true
-num x = 5
-str string = 'Hello'
-str stringTwo = "Hello again"
-
-;; functions
-fn factorial {num n} -> num (
-  if {n < 0} run (
-    ret -1
-  ) else (
-    num r = 1
-
-    while {n > 0} (
-      r *= n
-      n -= 1
-    )
-
-    ret r
-  )
+;; sea only supports a single main {} function currently
+fn main {} (
+  num n = 5
+  ret n * 2
 )
 ```

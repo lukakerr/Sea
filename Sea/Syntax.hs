@@ -11,29 +11,42 @@ data Token =
   | Identifier Id
   | Num Int | Str String | Bln Bool
   | LBrace | RBrace | LParen | RParen
-  deriving (Show)
+  deriving (Show, Eq)
 
-data Keyword = If | Run | Else | While | Ret | Fn
-  deriving (Show)
+data Keyword = If | Run | Else | While | Ret | Fn | Print
+  deriving (Show, Eq)
 
 -- data types
 data Type = N | S | B
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Op =
   Gt | Lt | GtE | LtE
+  | And | Or
+  | Eq | EqS | NeQ
   | Plus | Minus | Times | Divide | Modulus
-  | Eq | PlusEq | MinusEq | TimesEq | DivideEq | ModulusEq
-  deriving (Show)
+  | PlusEq | MinusEq | TimesEq | DivideEq | ModulusEq
+  deriving (Show, Eq)
 
--- expressions the parser can produce
+-- programs the parser can produce
+type Program = Function
+
+-- fn main {} ( ... )
+newtype Function = Main Exp
+  deriving (Show, Eq)
+
 data Exp =
   End
-  | Const Value
-  | Prim Op
-  | Var Id
-  | App Exp Exp
-  deriving (Show)
+  | Assignment Assign
+  | Return Statement
+  | Show Statement
+  deriving (Show, Eq)
+
+data Assign = Equals Id Statement Exp
+  deriving (Show, Eq)
+
+data Statement = Const Value | Var Id | Prim Op | App Statement Statement
+  deriving (Show, Eq)
 
 -- values the program can evaluate to
 data Value =
@@ -41,9 +54,10 @@ data Value =
   | Boolean Bool
   | String String
   | Nil
-  deriving (Show)
+  deriving (Show, Eq)
 
 showValue :: Value -> String
 showValue (Number n) = show n
 showValue (Boolean b) = show b
-showValue Nil = "Nil"
+showValue (String s) = show s
+showValue _ = "Nil"

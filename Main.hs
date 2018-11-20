@@ -32,7 +32,9 @@ repl = do
   line <- getLine
   case line of
     ":q" -> exitSuccess
-    _ -> evaluatr line
+    _ ->
+      let main = "fn main {} ( " ++ line ++ " )" in
+        evaluatr main
   repl
 
 -- run the lexer

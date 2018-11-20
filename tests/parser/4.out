@@ -1,0 +1,1 @@
+Main (Assignment (Equals "n" (Const (Number 5)) (Return (App (App (Prim Times) (Var "n")) (Const (Number 2))))))

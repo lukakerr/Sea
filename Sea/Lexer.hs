@@ -28,6 +28,10 @@ lexer ('%':cs) = Operator Modulus : lexer cs
 -- arithmetic comparisons
 lexer ('>':'=':cs) = Operator GtE : lexer cs
 lexer ('<':'=':cs) = Operator LtE : lexer cs
+lexer ('=':'=':cs) = Operator EqS : lexer cs
+lexer ('!':'=':cs) = Operator NeQ : lexer cs
+lexer ('&':'&':cs) = Operator And : lexer cs
+lexer ('|':'|':cs) = Operator Or : lexer cs
 lexer ('=':cs) = Operator Eq : lexer cs
 lexer ('>':cs) = Operator Gt : lexer cs
 lexer ('<':cs) = Operator Lt : lexer cs
@@ -82,6 +86,7 @@ captureKwd kwd = case kwd of
   "while" -> Kwd While
   "ret" -> Kwd Ret
   "fn" -> Kwd Fn
+  "print" -> Kwd Print
   "num" -> DataType N
   "bln" -> DataType B
   "str" -> DataType S
