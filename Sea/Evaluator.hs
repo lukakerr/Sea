@@ -1,7 +1,6 @@
 module Sea.Evaluator (evaluator) where
 
 import Data.Maybe
-import Debug.Trace
 import Sea.Syntax
 import qualified Sea.Environment as E
 
