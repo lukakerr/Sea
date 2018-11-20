@@ -1,24 +1,33 @@
 module Sea.Evaluator (evaluator) where
 
+import Data.Maybe
+import Debug.Trace
 import Sea.Syntax
+import qualified Sea.Environment as E
+
+type VEnv = E.Env Value
 
 type OpFun = (Int -> Int -> Int)
 
 evaluator :: Program -> Value
-evaluator (Main e) = evalE e
+evaluator (Main e) = evalE E.empty e
 
-evalE :: Exp -> Value
-evalE End = Nil
-evalE (Show e) = evalS e
-evalE (Return e) = evalS e
-evalE (Assignment a) = evalA a
+evalE :: VEnv -> Exp -> Value
+evalE v End = Nil
+evalE v (Show e) = evalS v e
+evalE v (Return e) = evalS v e
+evalE v (Assignment a) = evalA v a
 
-evalA :: Assign -> Value
-evalA (Equals v s e) = evalS s
+evalA :: VEnv -> Assign -> Value
+evalA v (Equals i s e) = let
+    v' = E.add v (i, stmt)
+    stmt = evalS v' s
+  in evalE v' e
 
-evalS :: Statement -> Value
-evalS (Const c) = c
-evalS (App (App (Prim p) e1) e2) = evalPrimOp (evalS e1) p (evalS e2)
+evalS :: VEnv -> Statement -> Value
+evalS v (Var i) = fromMaybe (error $ "Variable " ++ i ++ " not in scope") $ E.get v i
+evalS v (Const c) = c
+evalS v (App (App (Prim p) e1) e2) = evalPrimOp (evalS v e1) p (evalS v e2)
 
 evalPrimOp :: Value -> Op -> Value -> Value
 evalPrimOp e1 op e2 = case (e1, e2) of
