@@ -42,7 +42,7 @@ data Exp =
   | Show Statement
   deriving (Show, Eq)
 
-data Assign = Equals Id Statement Exp
+data Assign = AsignOp Op Id Statement Exp
   deriving (Show, Eq)
 
 data Statement = Const Value | Var Id | Prim Op | App Statement Statement

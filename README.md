@@ -55,7 +55,8 @@ This will be updated as the parser and evaluator progress.
 ```assembly
 ;; sea only supports a single main {} function currently
 fn main {} (
-  num n = 5
+  num n = 2 * 3
+  n -= 4
   ret n * 2
 )
 ```

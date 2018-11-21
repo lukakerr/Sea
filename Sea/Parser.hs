@@ -18,22 +18,27 @@ parseFunction (Kwd Fn : Identifier "main" : LBrace : RBrace : LParen : e) =
 parseFunction _ = error "Only supports a single main {} declaration"
 
 parseExp :: [Token] -> (Exp, [Token])
-parseExp (Kwd Print : ts) =
-  let (e, ts') = parsePrint (Kwd Print : ts) in
-    if null ts' then (e, ts') else parseExp ts'
-parseExp (Kwd Ret : ts) =
-  let (e, ts') = parseReturn (Kwd Ret : ts) in
-    if null ts' then (e, ts') else parseExp ts'
-parseExp ts =
-  let (e, ts') = parseAssignment ts in
-    if null ts' then (e, ts') else parseExp ts'
+parseExp (k@(Kwd kwd) : ts) = let
+    f = case kwd of
+      Print -> parsePrint
+      Ret -> parseReturn
+    (e, ts') = f (k : ts)
+  in if null ts' then (e, ts') else parseExp ts'
+parseExp ts = let
+    (e, ts') = parseAssignment ts
+  in if null ts' then (e, ts') else parseExp ts'
 
 parseAssignment :: [Token] -> (Exp, [Token])
 parseAssignment (DataType t : Identifier i : Operator Eq : ts) =
   let
     (e', ts') = parseOperation ts
     (e'', ts'') = parseExp ts'
-  in (Assignment (Equals i e' e''), ts'')
+  in (Assignment (AsignOp Eq i e' e''), ts'')
+parseAssignment (Identifier i : Operator o : ts) =
+  let
+    (s, ts') = parseOperation ts
+    (s', ts'') = parseExp ts'
+  in (Assignment (AsignOp o i s s'), ts'')
 
 parsePrint :: [Token] -> (Exp, [Token])
 parsePrint (Kwd Print : ts) = let
