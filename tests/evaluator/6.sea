@@ -1,0 +1,5 @@
+fn main {} (
+  str s = "hello"
+  str ss = "Hello"
+  ret s == ss
+)

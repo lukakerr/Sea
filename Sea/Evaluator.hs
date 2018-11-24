@@ -61,6 +61,11 @@ evalPrimOp e1 op e2 = case (e1, e2) of
       And -> Boolean $ e1' && e2'
       Or -> Boolean $ e1' || e2'
       _ -> error $ "Can't perform " ++ show op ++ " on two Boolean values"
+  (String e1', String e2') ->
+    case op of
+      EqS -> Boolean $ e1' == e2'
+      NeQ -> Boolean $ e1' /= e2'
+      _ -> error $ "Can't perform " ++ show op ++ " on two String values"
   (e1', e2') ->
     error $ "Can't compare " ++ show e1' ++ " and " ++ show e2'
 
