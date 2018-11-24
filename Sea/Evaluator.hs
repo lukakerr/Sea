@@ -14,28 +14,28 @@ evaluator (Main e) = evalE E.empty e
 -- evaluate an expression
 evalE :: VEnv -> Exp -> Value
 evalE v End = Nil
-evalE v (Show e) = evalS v e
-evalE v (Return e) = evalS v e
-evalE v (Assignment a) = evalA v a
+evalE v (Const c) = c
+evalE v (Var i) =
+  fromMaybe (error $ "Variable " ++ i ++ " not in scope") $ E.get v i
+evalE v (Show e1 e2) = let
+    e1' = evalE v e1
+  in evalE v e2
+evalE v (Return e) = evalE v e
+evalE v (App (App (Prim p) e1) e2) = evalPrimOp (evalE v e1) p (evalE v e2)
+evalE v e = evalA v e
 
 -- evaluate an assignment
-evalA :: VEnv -> Assign -> Value
-evalA v (AsignOp Eq i s e) = let
+evalA :: VEnv -> Exp -> Value
+evalA v (Assignment i Eq s e) = let
     v' = E.add v (i, stmt)
-    stmt = evalS v' s
+    stmt = evalE v' s
   in evalE v' e
-evalA v (AsignOp o i s e) = let
-    s' = evalS v s
-    i' = evalS v $ Var i
+evalA v (Assignment i o s e) = let
+    s' = evalE v s
+    i' = evalE v $ Var i
     i'' = evalPrimOp i' o s'
     v' = E.add v (i, i'')
   in evalE v' e
-
--- evaluate a statement
-evalS :: VEnv -> Statement -> Value
-evalS v (Var i) = fromMaybe (error $ "Variable " ++ i ++ " not in scope") $ E.get v i
-evalS v (Const c) = c
-evalS v (App (App (Prim p) e1) e2) = evalPrimOp (evalS v e1) p (evalS v e2)
 
 -- evaluate a primitive operation
 evalPrimOp :: Value -> Op -> Value -> Value

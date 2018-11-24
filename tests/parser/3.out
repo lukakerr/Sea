@@ -1,1 +1,1 @@
-Main (Show (App (App (Prim And) (Const (Boolean True))) (Const (Boolean False))))
+Main (Show (App (App (Prim And) (Const (Boolean True))) (Const (Boolean False))) End)

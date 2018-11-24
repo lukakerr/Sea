@@ -1,5 +1,5 @@
 fn main {} (
-  num n = 2 * 3
-  n -= 4
-  ret n * 2
+  num j = 2 + 4
+  num n = 8
+  ret j * (4 - n)
 )

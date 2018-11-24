@@ -29,23 +29,18 @@ data Op =
   deriving (Show, Eq)
 
 -- programs the parser can produce
-type Program = Function
-
--- fn main {} ( ... )
-newtype Function = Main Exp
+newtype Program = Main Exp
   deriving (Show, Eq)
 
 data Exp =
   End
-  | Assignment Assign
-  | Return Statement
-  | Show Statement
-  deriving (Show, Eq)
-
-data Assign = AsignOp Op Id Statement Exp
-  deriving (Show, Eq)
-
-data Statement = Const Value | Var Id | Prim Op | App Statement Statement
+  | Var Id
+  | Prim Op
+  | Show Exp Exp
+  | Return Exp
+  | Const Value
+  | App Exp Exp
+  | Assignment Id Op Exp Exp
   deriving (Show, Eq)
 
 -- values the program can evaluate to

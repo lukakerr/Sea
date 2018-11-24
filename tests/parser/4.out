@@ -1,1 +1,1 @@
-Main (Assignment (AsignOp Eq "n" (Const (Number 5)) (Return (App (App (Prim Times) (Var "n")) (Const (Number 2))))))
+Main (Assignment "n" Eq (Const (Number 5)) (Return (App (App (Prim Times) (Var "n")) (Const (Number 2)))))

@@ -2,5 +2,6 @@ fn main {} (
   str s = "hello"
   str ss = "Hello"
   str sss = s + ss
-  ret sss
+  str ssss = sss + " final string"
+  ret ssss
 )
