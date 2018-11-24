@@ -86,7 +86,6 @@ captureKwd kwd = case kwd of
   "while" -> Kwd While
   "ret" -> Kwd Ret
   "fn" -> Kwd Fn
-  "print" -> Kwd Print
   "num" -> DataType N
   "bln" -> DataType B
   "str" -> DataType S

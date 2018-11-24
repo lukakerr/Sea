@@ -1,4 +1,0 @@
-fn main {} (
-  num n = 5
-  ret n * 2
-)

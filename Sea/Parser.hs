@@ -15,7 +15,7 @@ parseFunction _ = error "Only supports a single main {} declaration"
 
 parseExp :: [Token] -> (Exp, [Token])
 parseExp [] = (End, [])
-parseExp e@(a : Operator o : b : ts) = parseAssignment e
+parseExp e@(a : Operator o : ts) = parseOperation e
 parseExp e@(Kwd kwd : ts) = parseKeyword e
 parseExp (Num n : ts) = (Const (Number n), ts)
 parseExp (Str s : ts) = (Const (String s), ts)
@@ -29,8 +29,8 @@ parseExp ts = parseAssignment ts
 parseKeyword :: [Token] -> (Exp, [Token])
 parseKeyword (k@(Kwd kwd) : ts) = let
     f = case kwd of
-      Print -> parsePrint
       Ret -> parseReturn
+      If -> parseIf
   in f (k : ts)
 
 parseOperation :: [Token] -> (Exp, [Token])
@@ -47,13 +47,22 @@ parseAssignment (DataType t : Identifier i : Operator Eq : ts) =
   in (Assignment i Eq e e', ts'')
 parseAssignment ts = parseOperation ts
 
-parsePrint :: [Token] -> (Exp, [Token])
-parsePrint (Kwd Print : ts) = let
-    (stmt, ts') = parseExp ts
-    (e, ts'') = parseExp ts'
-  in (Show stmt e, ts'')
-
 parseReturn :: [Token] -> (Exp, [Token])
 parseReturn (Kwd Ret : ts) = let
     (stmt, ts') = parseExp ts
   in (Return stmt, ts')
+
+parseIf :: [Token] -> (Exp, [Token])
+parseIf (Kwd If : LBrace : ts) = case parseExp ts of
+  (cond, RBrace : Kwd Run : ts') -> case ts' of
+    (LParen : ts'') -> case parseExp ts'' of
+      (trueBranch, RParen : Kwd Else : LParen : tss) -> case parseExp tss of
+        (falseBranch, RParen : tss') -> (IfElse cond trueBranch falseBranch, tss')
+        _                            -> error "Expected )"
+      (_, RParen : Kwd Else : _) -> error "Expected ("
+      (_, RParen : _)            -> error "Expected else keyword"
+      _                          -> error "Expected )"
+    _ -> error "Expected ("
+  (_, RBrace : _) -> error "Expected run keyword"
+  _               -> error "Expected }"
+parseIf (Kwd If : ts) = error "Expected {"

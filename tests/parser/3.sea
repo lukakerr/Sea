@@ -1,3 +1,4 @@
 fn main {} (
-  print true && false
+  num n = 5
+  ret n * 2
 )

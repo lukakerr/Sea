@@ -1,5 +1,11 @@
 fn main {} (
-  num n = 2 * 3
-  n -= 2
-  ret n
+  num n = 3 * 4
+  str s = "Hello world"
+  str ss = s + " again"
+
+  if {n > 10} run (
+    ret ss
+  ) else (
+    ret s
+  )
 )

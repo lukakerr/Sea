@@ -13,7 +13,7 @@ data Token =
   | LBrace | RBrace | LParen | RParen
   deriving (Show, Eq)
 
-data Keyword = If | Run | Else | While | Ret | Fn | Print
+data Keyword = If | Run | Else | While | Ret | Fn
   deriving (Show, Eq)
 
 -- data types
@@ -36,10 +36,10 @@ data Exp =
   End
   | Var Id
   | Prim Op
-  | Show Exp Exp
   | Return Exp
   | Const Value
   | App Exp Exp
+  | IfElse Exp Exp Exp
   | Assignment Id Op Exp Exp
   deriving (Show, Eq)
 

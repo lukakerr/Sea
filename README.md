@@ -34,9 +34,9 @@ Or you can run the interactive REPL:
 ```bash
 $ stack run sea repl
 
-# Sea> print 1 + 2
+# Sea> 1 + 2
 # 3
-# Sea> num n = 5 ret n
+# Sea> str n = "Hello Sea" n
 # 5
 # Sea> :q
 ```
@@ -55,8 +55,14 @@ This will be updated as the parser and evaluator progress.
 ```assembly
 ;; sea only supports a single main {} function currently
 fn main {} (
-  num n = 2 * 3
-  n -= 4
-  ret n * 2
+  num n = 3 * 4
+  str s = "Hello world"
+  str ss = s + " again"
+
+  if {n > 10} run (
+    ret ss
+  ) else (
+    ret s
+  )
 )
 ```
