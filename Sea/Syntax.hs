@@ -59,5 +59,5 @@ data Value =
 showValue :: Value -> String
 showValue (Number n) = show n
 showValue (Boolean b) = show b
-showValue (String s) = show s
+showValue (String s) = s
 showValue _ = "Nil"

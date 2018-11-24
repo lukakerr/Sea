@@ -42,8 +42,6 @@ evalPrimOp :: Value -> Op -> Value -> Value
 evalPrimOp e1 op e2 = case (e1, e2) of
   (Number e1', Number e2') ->
     case op of
-      EqS -> Boolean $ e1' == e2'
-      NeQ -> Boolean $ e1' /= e2'
       Gt -> Boolean $ e1' > e2'
       Lt -> Boolean $ e1' < e2'
       GtE -> Boolean $ e1' >= e2'
@@ -56,18 +54,18 @@ evalPrimOp e1 op e2 = case (e1, e2) of
       _ -> error $ "Can't perform " ++ show op ++ " on two Number values"
   (Boolean e1', Boolean e2') ->
     case op of
-      EqS -> Boolean $ e1' == e2'
-      NeQ -> Boolean $ e1' /= e2'
       And -> Boolean $ e1' && e2'
       Or -> Boolean $ e1' || e2'
       _ -> error $ "Can't perform " ++ show op ++ " on two Boolean values"
   (String e1', String e2') ->
     case op of
-      EqS -> Boolean $ e1' == e2'
-      NeQ -> Boolean $ e1' /= e2'
+      o | o `elem` [Plus, PlusEq] -> String $ e1' ++ e2'
       _ -> error $ "Can't perform " ++ show op ++ " on two String values"
   (e1', e2') ->
-    error $ "Can't compare " ++ show e1' ++ " and " ++ show e2'
+    case op of
+      EqS -> Boolean $ e1' == e2'
+      NeQ -> Boolean $ e1' /= e2'
+      _ -> error $ "Can't compare " ++ show e1' ++ " and " ++ show e2'
 
 -- util function to ensure operations where division by 0 could occur throws an error
 oper :: Int -> OpFun -> Int -> Int
