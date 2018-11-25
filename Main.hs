@@ -1,6 +1,7 @@
 import Sea.Lexer
 import Sea.Parser
 import Sea.Syntax
+import Sea.Program
 import Sea.Evaluator
 
 import System.IO
@@ -39,12 +40,16 @@ repl = do
 
 -- run the lexer
 lexr :: String -> IO ()
-lexr = print . lexer
+lexr s = print $ extractTokens $ lexer (s, 1)
 
 -- run the parser
 parsr :: String -> IO ()
-parsr = print . parser . lexer
+parsr s = case parser $ lexer (s, 1) of
+  Right prog -> print prog
+  Left  ex   -> putStrLn $ showException ex
 
 -- run the evaluator
 evaluatr :: String -> IO ()
-evaluatr = putStrLn . showValue . evaluator . parser . lexer
+evaluatr s = case parser $ lexer (s, 1) of
+  Right prog -> putStrLn $ showValue $ evaluator prog
+  Left  ex   -> putStrLn $ showException ex

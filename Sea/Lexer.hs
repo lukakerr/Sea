@@ -3,71 +3,72 @@ module Sea.Lexer (lexer) where
 import Sea.Syntax
 import Data.Char(isSpace, isDigit, isAlpha)
 
-lexer :: String -> [Token]
-lexer [] = []
+lexer :: (String, Line) -> Lexemes
+lexer ([], l) = []
 
 -- remove whitespace, isSpace handles all others
-lexer (' ':cs) = lexer cs
-lexer (c:cs) | isSpace c = lexer cs
+lexer (' ':cs, l) = lexer (cs, l)
+lexer ('\n':cs, l) = lexer (cs, l + 1)
+lexer (c:cs, l) | isSpace c = lexer (cs, l)
 
 -- arrow
-lexer ('-' : '>' : cs) = Arrow : lexer cs
+lexer ('-' : '>' : cs, l) = (Arrow, l) : lexer (cs, l)
 
 -- arithmetic operations
-lexer ('+':'=':cs) = Operator PlusEq : lexer cs
-lexer ('-':'=':cs) = Operator MinusEq : lexer cs
-lexer ('*':'=':cs) = Operator TimesEq : lexer cs
-lexer ('/':'=':cs) = Operator DivideEq : lexer cs
-lexer ('%':'=':cs) = Operator ModulusEq : lexer cs
-lexer ('+':cs) = Operator Plus : lexer cs
-lexer ('-':cs) = Operator Minus : lexer cs
-lexer ('*':cs) = Operator Times : lexer cs
-lexer ('/':cs) = Operator Divide : lexer cs
-lexer ('%':cs) = Operator Modulus : lexer cs
+lexer ('+':'=':cs, l) = (Operator PlusEq, l) : lexer (cs, l)
+lexer ('-':'=':cs, l) = (Operator MinusEq, l) : lexer (cs, l)
+lexer ('*':'=':cs, l) = (Operator TimesEq, l) : lexer (cs, l)
+lexer ('/':'=':cs, l) = (Operator DivideEq, l) : lexer (cs, l)
+lexer ('%':'=':cs, l) = (Operator ModulusEq, l) : lexer (cs, l)
+lexer ('+':cs, l) = (Operator Plus, l) : lexer (cs, l)
+lexer ('-':cs, l) = (Operator Minus, l) : lexer (cs, l)
+lexer ('*':cs, l) = (Operator Times, l) : lexer (cs, l)
+lexer ('/':cs, l) = (Operator Divide, l) : lexer (cs, l)
+lexer ('%':cs, l) = (Operator Modulus, l) : lexer (cs, l)
 
 -- arithmetic comparisons
-lexer ('>':'=':cs) = Operator GtE : lexer cs
-lexer ('<':'=':cs) = Operator LtE : lexer cs
-lexer ('=':'=':cs) = Operator EqS : lexer cs
-lexer ('!':'=':cs) = Operator NeQ : lexer cs
-lexer ('&':'&':cs) = Operator And : lexer cs
-lexer ('|':'|':cs) = Operator Or : lexer cs
-lexer ('=':cs) = Operator Eq : lexer cs
-lexer ('>':cs) = Operator Gt : lexer cs
-lexer ('<':cs) = Operator Lt : lexer cs
+lexer ('>':'=':cs, l) = (Operator GtE, l) : lexer (cs, l)
+lexer ('<':'=':cs, l) = (Operator LtE, l) : lexer (cs, l)
+lexer ('=':'=':cs, l) = (Operator EqS, l) : lexer (cs, l)
+lexer ('!':'=':cs, l) = (Operator NeQ, l) : lexer (cs, l)
+lexer ('&':'&':cs, l) = (Operator And, l) : lexer (cs, l)
+lexer ('|':'|':cs, l) = (Operator Or, l) : lexer (cs, l)
+lexer ('=':cs, l) = (Operator Eq, l) : lexer (cs, l)
+lexer ('>':cs, l) = (Operator Gt, l) : lexer (cs, l)
+lexer ('<':cs, l) = (Operator Lt, l) : lexer (cs, l)
 
 -- braces, parentheses
-lexer ('(':cs) = LParen : lexer cs
-lexer (')':cs) = RParen : lexer cs
-lexer ('{':cs) = LBrace : lexer cs
-lexer ('}':cs) = RBrace : lexer cs
+lexer ('(':cs, l) = (LParen, l) : lexer (cs, l)
+lexer (')':cs, l) = (RParen, l) : lexer (cs, l)
+lexer ('{':cs, l) = (LBrace, l) : lexer (cs, l)
+lexer ('}':cs, l) = (RBrace, l) : lexer (cs, l)
 
 -- digits
-lexer (c:cs) | isDigit c = let
+lexer (c:cs, l) | isDigit c = let
   (numString, rest) = span isDigit (c:cs)
-    in Num (read numString) : lexer rest
+    in (Num (read numString), l) : lexer (rest, l)
 
 -- booleans
-lexer ('t':'r':'u':'e':cs) = Bln True : lexer cs
-lexer ('f':'a':'l':'s':'e':cs) = Bln False : lexer cs
+lexer ('t':'r':'u':'e':cs, l) = (Bln True, l) : lexer (cs, l)
+lexer ('f':'a':'l':'s':'e':cs, l) = (Bln False, l) : lexer (cs, l)
 
 -- single quoted strings
-lexer ('\'':cs) = let
+lexer ('\'':cs, l) = let
   (tok, rest) = captureStr cs '\''
-    in tok : lexer rest
+    in (tok, l) : lexer (rest, l)
 
 -- double quoted strings
-lexer ('"':cs) = let
+lexer ('"':cs, l) = let
   (tok, rest) = captureStr cs '"'
-    in tok : lexer rest
+    in (tok, l) : lexer (rest, l)
 
 -- words
-lexer (c:cs) | isAlpha c = let
+lexer (c:cs, l) | isAlpha c = let
   (word, rest) = span isWord (c : cs)
-    in captureKwd word : lexer rest
+    in (captureKwd word, l) : lexer (rest, l)
 
 -- remove comments
-lexer (';':';':cs) = lexer $ dropWhile (/= '\n') cs
+lexer (';':';':cs, l) = lexer (dropWhile (/= '\n') cs, l)
 
 -- anything not handled
 lexer _ = []

@@ -1,1 +1,1 @@
-Main (Return (Const (Boolean True)))
+Return (Const (Boolean True))

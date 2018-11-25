@@ -1,68 +1,77 @@
 module Sea.Parser (parser) where
 
 import Sea.Syntax
+import Sea.Program
 
-parser :: [Token] -> Program
-parser [] = Main (Return (Const (Number 0)))
-parser x = case parseFunction x of
-  (e, []) -> Main e
-  (e, tokens) -> error $ "Couldn't parse all tokens " ++ show tokens
+parser :: Lexemes -> Either Exception Exp
+parser [] = Right End
+parser ls = do
+  (e, tokens) <- runProgram $ parseFunction ls
+  case tokens of
+    [] -> Right e
+    _  -> Left $ ParseError $ "couldn't parse all tokens " ++ show tokens
 
-parseFunction :: [Token] -> (Exp, [Token])
-parseFunction (Kwd Fn : Identifier "main" : LBrace : RBrace : LParen : e) =
+parseFunction :: Lexemes -> Program (Exp, Lexemes)
+parseFunction ((Kwd Fn, _) : (Identifier "main", _) : (LBrace, _) : (RBrace, _) : (LParen, _) : e) =
   parseExp $ init e
-parseFunction _ = error "Only supports a single main {} declaration"
+parseFunction _ = exception $ ParseError "only supports a single main {} declaration"
 
-parseExp :: [Token] -> (Exp, [Token])
-parseExp [] = (End, [])
-parseExp e@(a : Operator o : ts) = parseOperation e
-parseExp e@(Kwd kwd : ts) = parseKeyword e
-parseExp (Num n : ts) = (Const (Number n), ts)
-parseExp (Str s : ts) = (Const (String s), ts)
-parseExp (Bln b : ts) = (Const (Boolean b), ts)
-parseExp (Identifier i : ts) = (Var i, ts)
-parseExp (LParen : ts) = case parseExp ts of
-  (exp, RParen : ts') -> (exp, ts')
-  (exp, ts') -> error "Expected )"
+parseExp :: Lexemes -> Program (Exp, Lexemes)
+parseExp [] = return  (End, [])
+parseExp e@((a, _) : (Operator o, _) : ts) = parseOperation e
+parseExp e@((Kwd kwd, _) : ts) = parseKeyword e
+parseExp ((Num n, _) : ts) = return (Const (Number n), ts)
+parseExp ((Str s, _) : ts) = return (Const (String s), ts)
+parseExp ((Bln b, _) : ts) = return (Const (Boolean b), ts)
+parseExp ((Identifier i, _) : ts) = return (Var i, ts)
+parseExp ((LParen, l) : ts) = do
+  (exp, ts) <- parseExp ts
+  case ts of
+    ((RParen, _) : ts') -> return (exp, ts')
+    ((_, _) : _) -> exception $ ExpectedToken ")" l
 parseExp ts = parseAssignment ts
 
-parseKeyword :: [Token] -> (Exp, [Token])
-parseKeyword (k@(Kwd kwd) : ts) = let
+parseKeyword :: Lexemes -> Program (Exp, Lexemes)
+parseKeyword (k@(Kwd kwd, _) : ts) = let
     f = case kwd of
       Ret -> parseReturn
       If -> parseIf
   in f (k : ts)
 
-parseOperation :: [Token] -> (Exp, [Token])
-parseOperation (a : Operator o : ts) = let
-    a' = fst $ parseExp [a]
-    (e, ts') = parseExp ts
-  in (App (App (Prim o) a') e, ts')
+parseOperation :: Lexemes -> Program (Exp, Lexemes)
+parseOperation (a : (Operator o, _) : ts) = do
+  a'       <- parseExp [a]
+  (e, ts') <- parseExp ts
+  return (App (App (Prim o) (fst a')) e, ts')
 
-parseAssignment :: [Token] -> (Exp, [Token])
-parseAssignment (DataType t : Identifier i : Operator Eq : ts) =
-  let
-    (e, ts') = parseExp ts
-    (e', ts'') = parseExp ts'
-  in (Assignment i Eq e e', ts'')
+parseAssignment :: Lexemes -> Program (Exp, Lexemes)
+parseAssignment ((DataType t, _) : (Identifier i, _) : (Operator Eq, _) : ts) = do
+  (e , ts' ) <- parseExp ts
+  (e', ts'') <- parseExp ts'
+  return (Assignment i Eq e e', ts'')
 parseAssignment ts = parseOperation ts
 
-parseReturn :: [Token] -> (Exp, [Token])
-parseReturn (Kwd Ret : ts) = let
-    (stmt, ts') = parseExp ts
-  in (Return stmt, ts')
+parseReturn :: Lexemes -> Program (Exp, Lexemes)
+parseReturn ((Kwd Ret, _) : ts) = do
+  (e, ts') <- parseExp ts
+  return (Return e, ts')
 
-parseIf :: [Token] -> (Exp, [Token])
-parseIf (Kwd If : LBrace : ts) = case parseExp ts of
-  (cond, RBrace : Kwd Run : ts') -> case ts' of
-    (LParen : ts'') -> case parseExp ts'' of
-      (trueBranch, RParen : Kwd Else : LParen : tss) -> case parseExp tss of
-        (falseBranch, RParen : tss') -> (IfElse cond trueBranch falseBranch, tss')
-        _                            -> error "Expected )"
-      (_, RParen : Kwd Else : _) -> error "Expected ("
-      (_, RParen : _)            -> error "Expected else keyword"
-      _                          -> error "Expected )"
-    _ -> error "Expected ("
-  (_, RBrace : _) -> error "Expected run keyword"
-  _               -> error "Expected }"
-parseIf (Kwd If : ts) = error "Expected {"
+parseIf :: Lexemes -> Program (Exp, Lexemes)
+parseIf ((Kwd If, _) : (LBrace, ll) : ts) = do
+  (cond, ts') <- parseExp ts
+  case ts' of
+    ((RBrace, _) : (Kwd Run, _) : (LParen, l) : ts') -> do
+      (trueBranch, ts'') <- parseExp ts'
+      case ts'' of
+        ((RParen, _) : (Kwd Else, _) : (LParen, l) : tss) -> do
+          (falseBranch, tss') <- parseExp tss
+          case tss' of
+            ((RParen, _) : tss'') -> return (IfElse cond trueBranch falseBranch, tss'')
+            _ -> exception $ ExpectedToken ")" l
+        ((RParen, _) : (Kwd Else, l) : tss) -> exception $ ExpectedToken "(" l
+        ((RParen, l) : tss) -> exception $ ExpectedToken "else keyword" l
+        _ -> exception $ ExpectedToken ")" l
+    ((RBrace, _) : (Kwd Run, l) : ts') -> exception $ ExpectedToken "(" l
+    ((RBrace, l) : _) -> exception $ ExpectedToken "run keyword" l
+    _ -> exception $ ExpectedToken "}" ll
+parseIf ((Kwd If, l) : ts) = exception $ ExpectedToken "{" l

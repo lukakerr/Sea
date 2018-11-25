@@ -1,0 +1,7 @@
+fn main {} (
+  if true} run (
+    ret "ok"
+  ) else (
+    ret "fail"
+  )
+)

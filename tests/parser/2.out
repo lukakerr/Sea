@@ -1,1 +1,1 @@
-Main (Return (App (App (Prim And) (Const (Boolean True))) (Const (Boolean False))))
+Return (App (App (Prim And) (Const (Boolean True))) (Const (Boolean False)))

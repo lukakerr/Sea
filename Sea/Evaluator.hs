@@ -2,14 +2,15 @@ module Sea.Evaluator (evaluator) where
 
 import Data.Maybe
 import Sea.Syntax
+import Sea.Program
 import qualified Sea.Environment as E
 
 type VEnv = E.Env Value
 
 type OpFun = (Int -> Int -> Int)
 
-evaluator :: Program -> Value
-evaluator (Main e) = evalE E.empty e
+evaluator :: Exp -> Value
+evaluator = evalE E.empty
 
 -- evaluate an expression
 evalE :: VEnv -> Exp -> Value

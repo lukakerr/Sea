@@ -1,6 +1,8 @@
 module Sea.Syntax where
 
+type Line = Int
 type Id = String
+type Lexemes = [(Token, Line)]
 
 -- tokens the lexer can produce
 data Token =
@@ -28,10 +30,7 @@ data Op =
   | PlusEq | MinusEq | TimesEq | DivideEq | ModulusEq
   deriving (Show, Eq)
 
--- programs the parser can produce
-newtype Program = Main Exp
-  deriving (Show, Eq)
-
+-- expressions the parser could produce
 data Exp =
   End
   | Var Id
@@ -51,8 +50,13 @@ data Value =
   | Nil
   deriving (Show, Eq)
 
+-- returns a string representation of a Value
 showValue :: Value -> String
 showValue (Number n) = show n
 showValue (Boolean b) = show b
 showValue (String s) = s
 showValue _ = "Nil"
+
+-- returns a list of tokens from Lexemes
+extractTokens :: Lexemes -> [Token]
+extractTokens = map fst
