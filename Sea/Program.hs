@@ -40,7 +40,7 @@ exception :: Exception -> Program a
 exception = Program . Left
 
 showException :: Exception -> String
-showException (UnexpectedToken s l) = "Unexpected token " ++ s ++ " at line " ++ show l
-showException (ExpectedToken s l) = "Expected " ++ s ++ " at line " ++ show l
-showException (OutOfScope s) = "Variable " ++ s ++ " is out of scope"
-showException (ParseError s) = "Parsing error " ++ s
+showException (UnexpectedToken s l) = "Error: Unexpected token " ++ s ++ " at line " ++ show l
+showException (ExpectedToken s l) = "Error: Expected " ++ s ++ " at line " ++ show l
+showException (OutOfScope s) = "Error: Variable " ++ s ++ " is out of scope"
+showException (ParseError s) = "Error: Parsing error " ++ s
