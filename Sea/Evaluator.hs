@@ -73,7 +73,7 @@ evalPrimOp e1 op e2 = case (e1, e2) of
       _ -> error $ "Can't perform " ++ show op ++ " on two String values"
   (e1', e2') -> error $ "Can't compare " ++ show e1' ++ " and " ++ show e2'
 
--- util function to ensure operations where division by 0 could occur throws an error
+-- ensure operations where division by 0 could occur throws an error
 oper :: Int -> OpFun -> Int -> Int
 oper _ _ 0 = error "Division by zero is invalid"
 oper a f b = a `f` b
