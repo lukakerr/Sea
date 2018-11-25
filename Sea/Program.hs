@@ -20,10 +20,9 @@ data Exception =
 newtype Program a = Program (Either Exception a)
 
 instance Monad Program where
-  (Program pg) >>= f =
-      case pg of
-        Left ex -> Program (Left ex)
-        Right v -> f v
+  (Program pg) >>= f = case pg of
+    Left  ex -> Program (Left ex)
+    Right v  -> f v
   return v = Program (Right v)
 
 instance Applicative Program where
