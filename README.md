@@ -37,7 +37,7 @@ $ stack run sea repl
 # Sea> 1 + 2
 # 3
 # Sea> str n = "Hello Sea" n
-# 5
+# Hello Sea 
 # Sea> :q
 ```
 
