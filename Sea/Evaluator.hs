@@ -19,7 +19,8 @@ evalE v (Const c) = c
 evalE v (Var i) =
   fromMaybe (error $ "Variable " ++ i ++ " not in scope") $ E.get v i
 evalE v (Return e) = evalE v e
-evalE v e@(IfElse e1 e2 e3) = evalIf v e
+evalE v e@(IfElse e1 e2 e3 e4) = evalIf v e
+evalE v e@(WhileLoop e1 e2 e3) = evalWhile v e
 evalE v (App (App (Prim p) e1) e2) = evalPrimOp (evalE v e1) p (evalE v e2)
 evalE v e = evalA v e
 
@@ -36,9 +37,16 @@ evalA v (Assignment i o s e) = let
     v' = E.add v (i, i'')
   in evalE v' e
 
+-- evaluate an if statement
 evalIf :: VEnv -> Exp -> Value
-evalIf v (IfElse e1 e2 e3) = case evalE v e1 of
+evalIf v (IfElse e1 e2 e3 e4) = case evalE v e1 of
   (Boolean e1') -> if e1' then evalE v e2 else evalE v e3
+  _             -> error "Invalid boolean condition"
+
+-- evaluate a while statement
+evalWhile :: VEnv -> Exp -> Value
+evalWhile v (WhileLoop e1 e2 e3) = case evalE v e1 of
+  (Boolean e1') -> error "TODO"
   _             -> error "Invalid boolean condition"
 
 -- evaluate a primitive operation

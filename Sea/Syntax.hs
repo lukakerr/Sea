@@ -38,7 +38,8 @@ data Exp =
   | Return Exp
   | Const Value
   | App Exp Exp
-  | IfElse Exp Exp Exp
+  | IfElse Exp Exp Exp Exp
+  | WhileLoop Exp Exp Exp
   | Assignment Id Op Exp Exp
   deriving (Show, Eq)
 

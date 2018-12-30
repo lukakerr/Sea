@@ -1,0 +1,9 @@
+fn main {} (
+  num n = 0
+
+  while { n < 5 } (
+    n++
+  )
+
+  ret n
+)

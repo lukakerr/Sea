@@ -1,0 +1,1 @@
+Assignment "n" Eq (Const (Number 0)) (WhileLoop (App (App (Prim Lt) (Var "n")) (Const (Number 5))) (App (App (Prim PlusEq) (Var "n")) (Const (Number 1))) (Return (Var "n")))

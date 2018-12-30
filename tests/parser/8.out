@@ -1,1 +1,1 @@
-IfElse (Const (Boolean True)) (Return (Const (String "ok"))) (Return (Const (String "fail")))
+IfElse (Const (Boolean True)) (Return (Const (String "ok"))) (Return (Const (String "fail"))) End
