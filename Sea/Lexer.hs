@@ -82,7 +82,6 @@ captureStr string quote = let
 captureKwd :: String -> Token
 captureKwd kwd = case kwd of
   "if" -> Kwd If
-  "run" -> Kwd Run
   "else" -> Kwd Else
   "while" -> Kwd While
   "ret" -> Kwd Ret

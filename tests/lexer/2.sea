@@ -1,6 +1,6 @@
 ;; Factorial function
 fn factorial {num n} -> num (
-  if {n < 0} run (
+  if {n < 0} (
     ret -1
   ) else (
     num r = 1

@@ -37,7 +37,7 @@ $ stack run sea repl
 # Sea> 1 + 2
 # 3
 # Sea> str n = "Hello Sea" n
-# Hello Sea 
+# Hello Sea
 # Sea> :q
 ```
 
@@ -59,7 +59,7 @@ fn main {} (
   str s = "Hello world"
   str ss = s + " again"
 
-  if {n > 10} run (
+  if {n > 10} (
     ret ss
   ) else (
     ret s

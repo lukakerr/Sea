@@ -15,7 +15,7 @@ data Token =
   | LBrace | RBrace | LParen | RParen
   deriving (Show, Eq)
 
-data Keyword = If | Run | Else | While | Ret | Fn
+data Keyword = If | Else | While | Ret | Fn
   deriving (Show, Eq)
 
 -- data types

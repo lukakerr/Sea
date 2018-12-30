@@ -60,7 +60,7 @@ parseIf :: Lexemes -> Program (Exp, Lexemes)
 parseIf ((Kwd If, _) : (LBrace, ll) : ts) = do
   (cond, ts') <- parseExp ts
   case ts' of
-    ((RBrace, _) : (Kwd Run, _) : (LParen, l) : ts') -> do
+    ((RBrace, _) : (LParen, l) : ts') -> do
       (trueBranch, ts'') <- parseExp ts'
       case ts'' of
         ((RParen, _) : (Kwd Else, _) : (LParen, l) : tss) -> do
@@ -71,7 +71,6 @@ parseIf ((Kwd If, _) : (LBrace, ll) : ts) = do
         ((RParen, _) : (Kwd Else, l) : tss) -> exception $ ExpectedToken "(" l
         ((RParen, l) : tss) -> exception $ ExpectedToken "else keyword" l
         _ -> exception $ ExpectedToken ")" l
-    ((RBrace, _) : (Kwd Run, l) : ts') -> exception $ ExpectedToken "(" l
-    ((RBrace, l) : _) -> exception $ ExpectedToken "run keyword" l
+    ((RBrace, l) : _) -> exception $ ExpectedToken "(" l
     _ -> exception $ ExpectedToken "}" ll
 parseIf ((Kwd If, l) : ts) = exception $ ExpectedToken "{" l

@@ -1,5 +1,5 @@
 fn main {} (
-  if true} run (
+  if true} (
     ret "ok"
   ) else (
     ret "fail"

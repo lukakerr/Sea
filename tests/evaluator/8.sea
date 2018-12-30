@@ -3,7 +3,7 @@ fn main {} (
   str s = "Hello world"
   str ss = s + " again"
 
-  if {n > 10} run (
+  if {n > 10} (
     ret ss
   ) else (
     ret s
