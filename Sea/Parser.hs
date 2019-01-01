@@ -18,18 +18,20 @@ parseFunction _ = exception $ ParseError "only supports a single main {} declara
 
 parseExp :: Lexemes -> Program (Exp, Lexemes)
 parseExp [] = return (End, [])
-parseExp e@((a, _) : (Operator o, _) : ts) = parseOperation e
+parseExp ((LParen, l) : ts) = do
+  (exp, ts') <- parseExp ts
+  case ts' of
+    ((RParen, _) : ts'') -> return (exp, ts'')
+    _                    -> exception $ ExpectedToken ")" l
 parseExp e@((Kwd kwd, _) : ts) = parseKeyword e
+parseExp e@((DataType t, _) : (Identifier i, _) : (Operator o, _) : ts) = parseAssignment e
+parseExp e@((Identifier i, _) : (Operator o, _) : ts)
+  | o `elem` [Eq, PlusEq, MinusEq, TimesEq, DivideEq, ModulusEq] = parseAssignment e
+parseExp e@((a, _) : (Operator o, _) : ts) = parseOperation e
+parseExp ((Identifier i, _) : ts) = return (Var i, ts)
 parseExp ((Num n, _) : ts) = return (Const (Number n), ts)
 parseExp ((Str s, _) : ts) = return (Const (String s), ts)
 parseExp ((Bln b, _) : ts) = return (Const (Boolean b), ts)
-parseExp ((Identifier i, _) : ts) = return (Var i, ts)
-parseExp ((LParen, l) : ts) = do
-  (exp, ts) <- parseExp ts
-  case ts of
-    ((RParen, _) : ts') -> return (exp, ts')
-    ((_, _) : _) -> exception $ ExpectedToken ")" l
-parseExp ts = parseAssignment ts
 
 parseKeyword :: Lexemes -> Program (Exp, Lexemes)
 parseKeyword (k@(Kwd kwd, _) : ts) = let
@@ -40,17 +42,20 @@ parseKeyword (k@(Kwd kwd, _) : ts) = let
   in f (k : ts)
 
 parseOperation :: Lexemes -> Program (Exp, Lexemes)
-parseOperation (a : (Operator o, _) : ts) = do
+parseOperation ls@(a : (Operator o, _) : ts) = do
   a'       <- parseExp [a]
   (e, ts') <- parseExp ts
-  return (App (App (Prim o) (fst a')) e, ts')
+  return (App (fst a') o e, ts')
 
 parseAssignment :: Lexemes -> Program (Exp, Lexemes)
 parseAssignment ((DataType t, _) : (Identifier i, _) : (Operator Eq, _) : ts) = do
   (e , ts' ) <- parseExp ts
   (e', ts'') <- parseExp ts'
   return (Assignment i Eq e e', ts'')
-parseAssignment ts = parseOperation ts
+parseAssignment ((Identifier i, _) : (Operator o, _) : ts) = do
+  (e , ts' ) <- parseExp ts
+  (e', ts'') <- parseExp ts'
+  return (Assignment i o e e', ts'')
 
 parseReturn :: Lexemes -> Program (Exp, Lexemes)
 parseReturn ((Kwd Ret, _) : ts) = do
@@ -61,33 +66,34 @@ parseIf :: Lexemes -> Program (Exp, Lexemes)
 parseIf ((Kwd If, _) : (LBrace, l) : ts) = do
   (cond, ts') <- parseExp ts
   case ts' of
-    ((RBrace, _) : (LParen, l) : ts') -> do
-      (trueBranch, ts'') <- parseExp ts'
-      case ts'' of
-        ((RParen, _) : (Kwd Else, _) : (LParen, l) : tss) -> do
-          (falseBranch, tss') <- parseExp tss
-          case tss' of
-            ((RParen, _) : tss'') -> do
-              (next, tsss) <- parseExp tss''
-              return (IfElse cond trueBranch falseBranch next, tsss)
+    ((RBrace, _) : (LParen, l) : ts'') -> do
+      (trueBranch, tss) <- parseExp ts''
+      case tss of
+        ((RParen, _) : (Kwd Else, _) : (LParen, l) : tss') -> do
+          (falseBranch, tss'') <- parseExp tss'
+          case tss'' of
+            ((RParen, _) : tsss) -> do
+              (next, tsss') <- parseExp tsss
+              return (IfElse cond trueBranch falseBranch next, tsss')
             _ -> exception $ ExpectedToken ")" l
-        ((RParen, _) : (Kwd Else, l) : tss) -> exception $ ExpectedToken "(" l
-        ((RParen, l) : tss) -> exception $ ExpectedToken "else keyword" l
+        ((RParen, _) : (Kwd Else, l) : _) -> exception $ ExpectedToken "(" l
+        ((RParen, l) : _) -> exception $ ExpectedToken "else keyword" l
         _ -> exception $ ExpectedToken ")" l
     ((RBrace, l) : _) -> exception $ ExpectedToken "(" l
-    _ -> exception $ ExpectedToken "}" l
-parseIf ((Kwd If, l) : ts) = exception $ ExpectedToken "{" l
+    _                 -> exception $ ExpectedToken "}" l
+parseIf ((Kwd If, l) : _) = exception $ ExpectedToken "{" l
 
 parseWhile :: Lexemes -> Program (Exp, Lexemes)
 parseWhile ((Kwd While, _) : (LBrace, l) : ts) = do
   (cond, ts') <- parseExp ts
   case ts' of
-    ((RBrace, _) : (LParen, l) : ts') -> do
-      (exp, ts'') <- parseExp ts'
-      case ts'' of
-        ((RParen, _) : tss) -> do
-          (next, tss') <- parseExp tss
-          return (WhileLoop cond exp next, tss')
+    ((RBrace, _) : (LParen, l) : ts'') -> do
+      (exp, tss) <- parseExp ts''
+      case tss of
+        ((RParen, _) : tss') -> do
+          (next, tss'') <- parseExp tss'
+          return (WhileLoop cond exp next, tss'')
         _ -> exception $ ExpectedToken ")" l
     ((RBrace, l) : _) -> exception $ ExpectedToken "(" l
-parseWhile ((Kwd While, l) : ts) = exception $ ExpectedToken "{" l
+    _                 -> exception $ ExpectedToken "}" l
+parseWhile ((Kwd While, l) : _) = exception $ ExpectedToken "{" l

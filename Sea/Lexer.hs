@@ -12,7 +12,7 @@ lexer ('\n':cs, l) = lexer (cs, l + 1)
 lexer (c:cs, l) | isSpace c = lexer (cs, l)
 
 -- arrow
-lexer ('-' : '>' : cs, l) = (Arrow, l) : lexer (cs, l)
+lexer ('-':'>':cs, l) = (Arrow, l) : lexer (cs, l)
 
 -- arithmetic operations
 lexer ('+':'=':cs, l) = (Operator PlusEq, l) : lexer (cs, l)
@@ -21,7 +21,7 @@ lexer ('*':'=':cs, l) = (Operator TimesEq, l) : lexer (cs, l)
 lexer ('/':'=':cs, l) = (Operator DivideEq, l) : lexer (cs, l)
 lexer ('%':'=':cs, l) = (Operator ModulusEq, l) : lexer (cs, l)
 lexer ('+':'+':cs, l) = (Operator PlusEq, l) : lexer ("1" ++ cs, l)
-lexer ('-':'-':cs, l) = (Operator MinusEq, l) : lexer ("-1" ++ cs, l)
+lexer ('-':'-':cs, l) = (Operator MinusEq, l) : lexer ("1" ++ cs, l)
 lexer ('+':cs, l) = (Operator Plus, l) : lexer (cs, l)
 lexer ('-':cs, l) = (Operator Minus, l) : lexer (cs, l)
 lexer ('*':cs, l) = (Operator Times, l) : lexer (cs, l)

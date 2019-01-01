@@ -30,6 +30,9 @@ data Op =
   | PlusEq | MinusEq | TimesEq | DivideEq | ModulusEq
   deriving (Show, Eq)
 
+-- an expression to be evaluated next
+type NextExp = Exp
+
 -- expressions the parser could produce
 data Exp =
   End
@@ -37,10 +40,10 @@ data Exp =
   | Prim Op
   | Return Exp
   | Const Value
-  | App Exp Exp
-  | IfElse Exp Exp Exp Exp
-  | WhileLoop Exp Exp Exp
-  | Assignment Id Op Exp Exp
+  | App Exp Op Exp
+  | IfElse Exp Exp Exp NextExp
+  | WhileLoop Exp Exp NextExp
+  | Assignment Id Op Exp NextExp
   deriving (Show, Eq)
 
 -- values the program can evaluate to

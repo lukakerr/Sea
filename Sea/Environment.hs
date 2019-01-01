@@ -2,8 +2,8 @@ module Sea.Environment
   ( Env(..)
   , empty
   , get
-  , add
-  , addAll
+  , set
+  , setAll
   )
 where
 
@@ -17,8 +17,8 @@ empty = Env M.empty
 get :: Env e -> String -> Maybe e
 get (Env env) var = M.lookup var env
 
-add :: Env e -> (String, e) -> Env e
-add (Env env) (key, elt) = Env (M.insert key elt env)
+set :: Env e -> (String, e) -> Env e
+set (Env env) (key, elt) = Env (M.insert key elt env)
 
-addAll :: Env e -> [(String, e)] -> Env e
-addAll (Env env) pairs = Env $ foldr (\(k, e) g -> M.insert k e g) env pairs
+setAll :: Env e -> [(String, e)] -> Env e
+setAll (Env env) pairs = Env $ foldr (\(k, e) g -> M.insert k e g) env pairs
